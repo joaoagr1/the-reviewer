@@ -3,6 +3,7 @@ import type { Persona } from '../domain/persona'
 import { usePersonaStore } from '../store/personaStore'
 import { PersonaList } from '../components/personas/PersonaList'
 import { PersonaForm } from '../components/personas/PersonaForm'
+import { ConfirmModal } from '../components/ConfirmModal'
 
 type View = 'list' | 'create' | 'edit'
 
@@ -12,6 +13,7 @@ export function PersonasPage() {
 
   const [view, setView] = useState<View>('list')
   const [editing, setEditing] = useState<Persona | null>(null)
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null)
 
   useEffect(() => {
     fetchPersonas()
@@ -33,9 +35,10 @@ export function PersonasPage() {
     setEditing(null)
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm('Excluir esta persona?')) return
-    await removePersona(id)
+  async function handleConfirmDelete() {
+    if (!pendingDeleteId) return
+    await removePersona(pendingDeleteId)
+    setPendingDeleteId(null)
   }
 
   if (loading) {
@@ -60,7 +63,7 @@ export function PersonasPage() {
             <p className="text-red-600 text-sm mb-4">Erro ao carregar personas: {error}</p>
           )}
 
-          <PersonaList personas={personas} onEdit={handleEdit} onDelete={handleDelete} />
+          <PersonaList personas={personas} onEdit={handleEdit} onDelete={setPendingDeleteId} />
         </>
       )}
 
@@ -76,6 +79,16 @@ export function PersonasPage() {
           <h1 className="text-xl font-semibold text-gray-900 mb-6">Editar Persona</h1>
           <PersonaForm initial={editing} onSave={handleSave} onCancel={handleCancel} />
         </>
+      )}
+
+      {pendingDeleteId && (
+        <ConfirmModal
+          title="Excluir persona"
+          message="Tem certeza? Esta ação não pode ser desfeita e todos os dados da persona serão perdidos."
+          confirmLabel="Excluir"
+          onConfirm={handleConfirmDelete}
+          onCancel={() => setPendingDeleteId(null)}
+        />
       )}
     </div>
   )
