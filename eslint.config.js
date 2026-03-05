@@ -18,6 +18,7 @@ export default [
         window: "readonly",
         HTMLElement: "readonly",
         console: "readonly",
+        crypto: "readonly",
       },
     },
     plugins: {
