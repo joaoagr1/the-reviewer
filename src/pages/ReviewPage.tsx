@@ -38,9 +38,11 @@ export function ReviewPage() {
     setStreaming(true)
     setView('result')
 
+    const plainText = new DOMParser().parseFromString(document, 'text/html').body.innerText
+
     let result = ''
     try {
-      for await (const chunk of streamReview(persona, document)) {
+      for await (const chunk of streamReview(persona, plainText)) {
         result += chunk
         setOutput((prev) => prev + chunk)
       }

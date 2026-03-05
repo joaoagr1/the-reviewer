@@ -14,7 +14,7 @@ describe('buildSystemPrompt', () => {
     const persona = createPersona('Rafael', 'Direto', 'llama3.2')
     const prompt = buildSystemPrompt(persona)
     expect(prompt).toContain('Revise o documento')
-    expect(prompt).toContain('Retorne apenas o documento revisado')
+    expect(prompt).toContain('Retorne APENAS o documento revisado')
   })
 
   it('includes rules section when persona has rules', () => {

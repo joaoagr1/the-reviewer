@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { Example } from '../../domain/persona'
 import { createExample } from '../../domain/persona'
+import { RichTextEditor } from '../RichTextEditor'
 
 interface Props {
   examples: Example[]
@@ -70,24 +71,22 @@ export function ExampleEditor({ examples, onChange }: Props) {
             <label className="block text-xs font-medium text-gray-600 mb-1">
               Documento Original
             </label>
-            <textarea
+            <RichTextEditor
               value={original}
-              onChange={(e) => setOriginal(e.target.value)}
-              rows={4}
+              onChange={(html) => setOriginal(html)}
               placeholder="Cole o documento original aqui..."
-              className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+              minHeight="120px"
             />
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1">
               Documento Revisado
             </label>
-            <textarea
+            <RichTextEditor
               value={revised}
-              onChange={(e) => setRevised(e.target.value)}
-              rows={4}
+              onChange={(html) => setRevised(html)}
               placeholder="Cole como o revisor reescreveria..."
-              className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+              minHeight="120px"
             />
           </div>
           <div>

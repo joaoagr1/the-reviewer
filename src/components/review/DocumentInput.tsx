@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import type { Persona } from '../../domain/persona'
+import { RichTextEditor } from '../RichTextEditor'
 
 interface Props {
   personas: Persona[]
@@ -19,6 +21,7 @@ export function DocumentInput({
   onSubmit,
   loading,
 }: Props) {
+  const [charCount, setCharCount] = useState(0)
   const canSubmit = !!selectedPersonaId && document.trim().length > 0 && !loading
 
   function handleSubmit(e: React.FormEvent) {
@@ -46,14 +49,16 @@ export function DocumentInput({
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">Documento</label>
-        <textarea
+        <RichTextEditor
           value={document}
-          onChange={(e) => onDocumentChange(e.target.value)}
-          rows={10}
+          onChange={(html, text) => {
+            onDocumentChange(html)
+            setCharCount(text.length)
+          }}
           placeholder="Cole ou digite o documento que deseja revisar..."
-          className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+          minHeight="240px"
         />
-        <p className="text-xs text-gray-400 mt-1 text-right">{document.length} / 50.000</p>
+        <p className="text-xs text-gray-400 mt-1 text-right">{charCount} / 50.000</p>
       </div>
 
       <button

@@ -21,7 +21,9 @@ export function buildSystemPrompt(persona: Persona): string {
   }
 
   parts.push(
-    'Revise o documento a seguir seguindo as regras e o estilo acima.\nRetorne apenas o documento revisado, sem comentários adicionais.'
+    `Revise o documento a seguir seguindo as regras e o estilo acima.
+Preserve e replique a formatação do original: use **negrito** para ênfase, *itálico* para termos, listas com "- " ou "1. ", títulos com "#", "> " para citações.
+Retorne APENAS o documento revisado, sem comentários, explicações ou prefácios.`
   )
 
   return parts.join('\n\n')
