@@ -24,6 +24,14 @@ export interface Persona {
   updatedAt: string
 }
 
+export interface Review {
+  id: string
+  personaId: string
+  inputDocument: string
+  outputDocument: string
+  createdAt: string
+}
+
 export interface PersonaInput {
   name: string
   description: string
