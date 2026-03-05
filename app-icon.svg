@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Background rounded square -->
+  <rect width="512" height="512" rx="110" ry="110" fill="#1e40af"/>
+
+  <!-- Magnifying glass circle (outer ring) -->
+  <circle cx="210" cy="205" r="110" fill="none" stroke="#ffffff" stroke-width="44"/>
+
+  <!-- Magnifying glass inner fill (subtle) -->
+  <circle cx="210" cy="205" r="88" fill="#3b82f6" opacity="0.35"/>
+
+  <!-- Handle -->
+  <line x1="292" y1="287" x2="390" y2="385" stroke="#ffffff" stroke-width="44" stroke-linecap="round"/>
+
+  <!-- Document lines inside the lens (suggesting text review) -->
+  <line x1="160" y1="178" x2="260" y2="178" stroke="#ffffff" stroke-width="18" stroke-linecap="round" opacity="0.9"/>
+  <line x1="160" y1="210" x2="260" y2="210" stroke="#ffffff" stroke-width="18" stroke-linecap="round" opacity="0.9"/>
+  <line x1="160" y1="242" x2="225" y2="242" stroke="#ffffff" stroke-width="18" stroke-linecap="round" opacity="0.9"/>
+</svg>
