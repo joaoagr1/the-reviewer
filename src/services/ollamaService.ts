@@ -37,6 +37,15 @@ export async function checkOllamaStatus(): Promise<boolean> {
   }
 }
 
+export async function listModels(): Promise<string[]> {
+  try {
+    const response = await getClient().list()
+    return response.models.map((m) => m.name)
+  } catch {
+    return []
+  }
+}
+
 export async function* streamReview(
   persona: Persona,
   document: string

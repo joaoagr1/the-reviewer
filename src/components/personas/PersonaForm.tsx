@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { Persona, Rule, Example } from '../../domain/persona'
 import { createPersona, validatePersona } from '../../domain/persona'
-import { analyzeStyle, OllamaError } from '../../services/ollamaService'
+import { analyzeStyle, listModels, OllamaError } from '../../services/ollamaService'
 import { RulesEditor } from './RulesEditor'
 import { ExampleEditor } from './ExampleEditor'
 import { GeneratedRulesModal } from './GeneratedRulesModal'
@@ -22,6 +22,11 @@ export function PersonaForm({ initial, onSave, onCancel }: Props) {
   const [analyzing, setAnalyzing] = useState(false)
   const [generatedRules, setGeneratedRules] = useState<Rule[] | null>(null)
   const [analyzeError, setAnalyzeError] = useState<string | null>(null)
+  const [availableModels, setAvailableModels] = useState<string[]>([])
+
+  useEffect(() => {
+    listModels().then(setAvailableModels)
+  }, [])
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -92,13 +97,26 @@ export function PersonaForm({ initial, onSave, onCancel }: Props) {
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Modelo Ollama *</label>
-          <input
-            type="text"
-            value={model}
-            onChange={(e) => setModel(e.target.value)}
-            placeholder="Ex: llama3.2"
-            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
+          {availableModels.length > 0 ? (
+            <select
+              value={model}
+              onChange={(e) => setModel(e.target.value)}
+              className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+            >
+              <option value="">Selecione um modelo...</option>
+              {availableModels.map((m) => (
+                <option key={m} value={m}>{m}</option>
+              ))}
+            </select>
+          ) : (
+            <input
+              type="text"
+              value={model}
+              onChange={(e) => setModel(e.target.value)}
+              placeholder="Ex: llama3.2 (Ollama offline ou sem modelos)"
+              className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+          )}
         </div>
 
         <RulesEditor rules={rules} onChange={setRules} />
