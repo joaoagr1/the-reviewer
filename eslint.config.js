@@ -19,6 +19,8 @@ export default [
         HTMLElement: "readonly",
         console: "readonly",
         crypto: "readonly",
+        confirm: "readonly",
+        React: "readonly",
       },
     },
     plugins: {

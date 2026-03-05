@@ -1,51 +1,43 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/core";
-import "./App.css";
+import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom'
+import { PersonasPage } from './pages/PersonasPage'
+import './App.css'
 
-function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
-
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    setGreetMsg(await invoke("greet", { name }));
-  }
+function Nav() {
+  const base = 'px-4 py-2 text-sm font-medium rounded'
+  const active = `${base} bg-blue-100 text-blue-700`
+  const inactive = `${base} text-gray-600 hover:bg-gray-100`
 
   return (
-    <main className="container">
-      <h1>Welcome to Tauri + React</h1>
-
-      <div className="row">
-        <a href="https://vite.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-      <p>{greetMsg}</p>
-    </main>
-  );
+    <nav className="border-b border-gray-200 bg-white px-6 py-3 flex gap-2">
+      <NavLink to="/" end className={({ isActive }) => (isActive ? active : inactive)}>
+        Personas
+      </NavLink>
+      <NavLink to="/review" className={({ isActive }) => (isActive ? active : inactive)}>
+        Revisar
+      </NavLink>
+    </nav>
+  )
 }
 
-export default App;
+export default function App() {
+  return (
+    <BrowserRouter>
+      <div className="min-h-screen bg-gray-50">
+        <Nav />
+        <main>
+          <Routes>
+            <Route path="/" element={<PersonasPage />} />
+            <Route
+              path="/review"
+              element={
+                <div className="max-w-2xl mx-auto px-4 py-8 text-gray-400 text-sm">
+                  Revisão — disponível no M6
+                </div>
+              }
+            />
+          </Routes>
+        </main>
+      </div>
+    </BrowserRouter>
+  )
+}
