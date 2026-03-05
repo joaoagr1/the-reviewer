@@ -1,6 +1,10 @@
+import { useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom'
 import { PersonasPage } from './pages/PersonasPage'
 import { ReviewPage } from './pages/ReviewPage'
+import { OllamaStatusBanner } from './components/OllamaStatusBanner'
+import { checkOllamaStatus } from './services/ollamaService'
+import type { OllamaStatus } from './components/OllamaStatusBanner'
 import './App.css'
 
 function Nav() {
@@ -21,10 +25,19 @@ function Nav() {
 }
 
 export default function App() {
+  const [ollamaStatus, setOllamaStatus] = useState<OllamaStatus>('unknown')
+
+  useEffect(() => {
+    checkOllamaStatus().then((online) => {
+      setOllamaStatus(online ? 'online' : 'offline')
+    })
+  }, [])
+
   return (
     <BrowserRouter>
       <div className="min-h-screen bg-gray-50">
         <Nav />
+        <OllamaStatusBanner status={ollamaStatus} />
         <main>
           <Routes>
             <Route path="/" element={<PersonasPage />} />

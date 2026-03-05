@@ -4,22 +4,30 @@ import { useReviewStore } from '../store/reviewStore'
 import { streamReview, OllamaError } from '../services/ollamaService'
 import { DocumentInput } from '../components/review/DocumentInput'
 import { ReviewResult } from '../components/review/ReviewResult'
+import { ReviewHistory } from '../components/review/ReviewHistory'
 import type { Review } from '../domain/persona'
+
+type View = 'input' | 'result' | 'history'
 
 export function ReviewPage() {
   const { personas, fetchPersonas } = usePersonaStore()
-  const { addReview } = useReviewStore()
+  const { reviews, fetchReviews, addReview } = useReviewStore()
 
   const [selectedPersonaId, setSelectedPersonaId] = useState<string | null>(null)
   const [document, setDocument] = useState('')
   const [output, setOutput] = useState('')
   const [streaming, setStreaming] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [done, setDone] = useState(false)
+  const [view, setView] = useState<View>('input')
 
   useEffect(() => {
     fetchPersonas()
   }, [fetchPersonas])
+
+  async function handlePersonaChange(id: string) {
+    setSelectedPersonaId(id)
+    await fetchReviews(id)
+  }
 
   async function handleSubmit() {
     const persona = personas.find((p) => p.id === selectedPersonaId)
@@ -27,8 +35,8 @@ export function ReviewPage() {
 
     setOutput('')
     setError(null)
-    setDone(false)
     setStreaming(true)
+    setView('result')
 
     let result = ''
     try {
@@ -45,10 +53,10 @@ export function ReviewPage() {
         createdAt: new Date().toISOString(),
       }
       await addReview(review)
-      setDone(true)
     } catch (e) {
       const msg = e instanceof OllamaError ? e.message : 'Erro inesperado ao revisar.'
       setError(msg)
+      setView('input')
     } finally {
       setStreaming(false)
     }
@@ -58,14 +66,38 @@ export function ReviewPage() {
     setDocument('')
     setOutput('')
     setError(null)
-    setDone(false)
+    setView('input')
   }
 
-  const showResult = streaming || done
+  function handleSelectHistoryReview(review: Review) {
+    setDocument(review.inputDocument)
+    setOutput(review.outputDocument)
+    setView('result')
+  }
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
-      <h1 className="text-xl font-semibold text-gray-900">Revisar Documento</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-semibold text-gray-900">Revisar Documento</h1>
+        {selectedPersonaId && view !== 'history' && (
+          <button
+            type="button"
+            onClick={() => setView('history')}
+            className="text-sm text-gray-500 hover:text-gray-700 hover:underline"
+          >
+            Ver Histórico ({reviews.length})
+          </button>
+        )}
+        {view === 'history' && (
+          <button
+            type="button"
+            onClick={() => setView('input')}
+            className="text-sm text-blue-600 hover:underline"
+          >
+            ← Voltar
+          </button>
+        )}
+      </div>
 
       {personas.length === 0 && (
         <p className="text-sm text-amber-600 bg-amber-50 border border-amber-200 rounded p-3">
@@ -79,23 +111,29 @@ export function ReviewPage() {
         </p>
       )}
 
-      {!showResult ? (
+      {view === 'input' && (
         <DocumentInput
           personas={personas}
           selectedPersonaId={selectedPersonaId}
-          onPersonaChange={setSelectedPersonaId}
+          onPersonaChange={handlePersonaChange}
           document={document}
           onDocumentChange={setDocument}
           onSubmit={handleSubmit}
           loading={streaming}
         />
-      ) : (
+      )}
+
+      {view === 'result' && (
         <ReviewResult
           original={document}
           revised={output}
           streaming={streaming}
           onNewReview={handleNewReview}
         />
+      )}
+
+      {view === 'history' && (
+        <ReviewHistory reviews={reviews} onSelect={handleSelectHistoryReview} />
       )}
     </div>
   )
