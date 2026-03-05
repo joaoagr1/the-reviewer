@@ -15,7 +15,7 @@ interface Props {
 export function PersonaForm({ initial, onSave, onCancel }: Props) {
   const [name, setName] = useState(initial?.name ?? '')
   const [description, setDescription] = useState(initial?.description ?? '')
-  const [model, setModel] = useState(initial?.model ?? 'llama3.2')
+  const [model, setModel] = useState(initial?.model ?? 'qwen2.5:0.5b')
   const [rules, setRules] = useState<Rule[]>(initial?.rules ?? [])
   const [examples, setExamples] = useState<Example[]>(initial?.examples ?? [])
   const [errors, setErrors] = useState<string[]>([])
