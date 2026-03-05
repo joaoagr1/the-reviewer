@@ -48,7 +48,8 @@ export async function listModels(): Promise<string[]> {
 
 export async function* streamReview(
   persona: Persona,
-  document: string
+  document: string,
+  signal?: AbortSignal
 ): AsyncGenerator<string> {
   if (!document.trim()) {
     throw new OllamaError('O documento não pode estar vazio.')
@@ -70,6 +71,7 @@ export async function* streamReview(
     })
 
     for await (const chunk of stream) {
+      if (signal?.aborted) return
       if (chunk.message.content) {
         yield chunk.message.content
       }

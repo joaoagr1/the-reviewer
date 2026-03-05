@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { usePersonaStore } from '../store/personaStore'
 import { useReviewStore } from '../store/reviewStore'
 import { streamReview, OllamaError } from '../services/ollamaService'
@@ -19,6 +19,7 @@ export function ReviewPage() {
   const [streaming, setStreaming] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [view, setView] = useState<View>('input')
+  const abortControllerRef = useRef<AbortController | null>(null)
 
   useEffect(() => {
     fetchPersonas()
@@ -40,9 +41,12 @@ export function ReviewPage() {
 
     const plainText = new DOMParser().parseFromString(document, 'text/html').body.innerText
 
+    const controller = new AbortController()
+    abortControllerRef.current = controller
+
     let result = ''
     try {
-      for await (const chunk of streamReview(persona, plainText)) {
+      for await (const chunk of streamReview(persona, plainText, controller.signal)) {
         result += chunk
         setOutput((prev) => prev + chunk)
       }
@@ -61,7 +65,14 @@ export function ReviewPage() {
       setView('input')
     } finally {
       setStreaming(false)
+      abortControllerRef.current = null
     }
+  }
+
+  function handleCancel() {
+    abortControllerRef.current?.abort()
+    setStreaming(false)
+    setView('input')
   }
 
   function handleNewReview() {
@@ -131,6 +142,7 @@ export function ReviewPage() {
           revised={output}
           streaming={streaming}
           onNewReview={handleNewReview}
+          onCancel={handleCancel}
         />
       )}
 

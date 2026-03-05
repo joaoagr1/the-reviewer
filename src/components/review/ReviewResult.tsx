@@ -5,9 +5,10 @@ interface Props {
   revised: string
   streaming: boolean
   onNewReview: () => void
+  onCancel: () => void
 }
 
-export function ReviewResult({ original, revised, streaming, onNewReview }: Props) {
+export function ReviewResult({ original, revised, streaming, onNewReview, onCancel }: Props) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -21,7 +22,15 @@ export function ReviewResult({ original, revised, streaming, onNewReview }: Prop
             'Revisão concluída'
           )}
         </h2>
-        {!streaming && (
+        {streaming ? (
+          <button
+            type="button"
+            onClick={onCancel}
+            className="text-sm text-red-500 hover:text-red-700 border border-red-300 rounded px-3 py-1 hover:bg-red-50 transition-colors"
+          >
+            Cancelar
+          </button>
+        ) : (
           <button
             type="button"
             onClick={onNewReview}
