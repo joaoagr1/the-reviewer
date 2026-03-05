@@ -1,0 +1,21 @@
+import { describe, it, expect } from 'vitest'
+import { render, screen } from '@testing-library/react'
+import { OllamaStatusBanner } from '../../components/OllamaStatusBanner'
+
+describe('OllamaStatusBanner', () => {
+  it('shows nothing when status is unknown', () => {
+    const { container } = render(<OllamaStatusBanner status="unknown" />)
+    expect(container.firstChild).toBeNull()
+  })
+
+  it('shows nothing when online', () => {
+    const { container } = render(<OllamaStatusBanner status="online" />)
+    expect(container.firstChild).toBeNull()
+  })
+
+  it('shows warning banner when offline', () => {
+    render(<OllamaStatusBanner status="offline" />)
+    expect(screen.getByText(/ollama não está rodando/i)).toBeInTheDocument()
+    expect(screen.getByText(/ollama serve/i)).toBeInTheDocument()
+  })
+})
