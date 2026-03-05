@@ -8,9 +8,9 @@ describe('OllamaStatusBanner', () => {
     expect(container.firstChild).toBeNull()
   })
 
-  it('shows nothing when online', () => {
-    const { container } = render(<OllamaStatusBanner status="online" />)
-    expect(container.firstChild).toBeNull()
+  it('shows online indicator when online', () => {
+    render(<OllamaStatusBanner status="online" />)
+    expect(screen.getByText(/ollama online/i)).toBeInTheDocument()
   })
 
   it('shows warning banner when offline', () => {

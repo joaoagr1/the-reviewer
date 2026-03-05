@@ -28,9 +28,14 @@ export default function App() {
   const [ollamaStatus, setOllamaStatus] = useState<OllamaStatus>('unknown')
 
   useEffect(() => {
-    checkOllamaStatus().then((online) => {
-      setOllamaStatus(online ? 'online' : 'offline')
-    })
+    function check() {
+      checkOllamaStatus().then((online) => {
+        setOllamaStatus(online ? 'online' : 'offline')
+      })
+    }
+    check()
+    const interval = setInterval(check, 30_000)
+    return () => clearInterval(interval)
   }, [])
 
   return (
