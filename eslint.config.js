@@ -21,6 +21,8 @@ export default [
         crypto: "readonly",
         confirm: "readonly",
         React: "readonly",
+        navigator: "readonly",
+        setTimeout: "readonly",
       },
     },
     plugins: {

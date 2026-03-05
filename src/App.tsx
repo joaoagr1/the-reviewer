@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom'
 import { PersonasPage } from './pages/PersonasPage'
+import { ReviewPage } from './pages/ReviewPage'
 import './App.css'
 
 function Nav() {
@@ -27,14 +28,7 @@ export default function App() {
         <main>
           <Routes>
             <Route path="/" element={<PersonasPage />} />
-            <Route
-              path="/review"
-              element={
-                <div className="max-w-2xl mx-auto px-4 py-8 text-gray-400 text-sm">
-                  Revisão — disponível no M6
-                </div>
-              }
-            />
+            <Route path="/review" element={<ReviewPage />} />
           </Routes>
         </main>
       </div>
