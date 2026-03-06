@@ -55,6 +55,25 @@
   color: inherit;
 }
 
+/* Diff highlight styles */
+mark.diff-insert {
+  background-color: #bbf7d0;
+  color: #14532d;
+  border-radius: 2px;
+  padding: 0 1px;
+  text-decoration: none;
+}
+
+mark.diff-delete {
+  background-color: #fecaca;
+  color: #7f1d1d;
+  border-radius: 2px;
+  padding: 0 1px;
+  text-decoration: line-through;
+  opacity: 0.8;
+}
+
+/* Placeholder */
 .rich-editor .tiptap p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
   color: #9ca3af;
