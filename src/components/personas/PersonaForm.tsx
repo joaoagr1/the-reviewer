@@ -10,9 +10,10 @@ interface Props {
   initial?: Persona
   onSave: (persona: Persona) => void
   onCancel: () => void
+  dark?: boolean
 }
 
-export function PersonaForm({ initial, onSave, onCancel }: Props) {
+export function PersonaForm({ initial, onSave, onCancel, dark }: Props) {
   const [name, setName] = useState(initial?.name ?? '')
   const [description, setDescription] = useState(initial?.description ?? '')
   const [model, setModel] = useState(initial?.model ?? 'qwen2.5:0.5b')
@@ -58,7 +59,7 @@ export function PersonaForm({ initial, onSave, onCancel }: Props) {
       const generated = await analyzeStyle(tempPersona)
       setGeneratedRules(generated)
     } catch (e) {
-      const msg = e instanceof OllamaError ? e.message : 'Erro ao analisar estilo.'
+      const msg = e instanceof OllamaError ? e.message : 'Failed to analyze style.'
       setAnalyzeError(msg)
     } finally {
       setAnalyzing(false)
@@ -70,40 +71,43 @@ export function PersonaForm({ initial, onSave, onCancel }: Props) {
     setGeneratedRules(null)
   }
 
+  const inputCls = `w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 ${dark ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-500' : 'border-gray-300'}`
+  const labelCls = `block text-sm font-medium ${dark ? 'text-gray-300' : 'text-gray-700'} mb-1`
+
   return (
     <>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Nome *</label>
+          <label className={labelCls}>Name *</label>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Ex: Chefe Rafael"
-            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            placeholder="e.g. Formal Editor"
+            className={inputCls}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Descrição *</label>
+          <label className={labelCls}>Description *</label>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={3}
-            placeholder="Ex: Gosta de textos objetivos, sem jargões, com bullet points"
-            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            placeholder="e.g. Prefers concise, formal language with bullet points"
+            className={inputCls}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Modelo Ollama *</label>
+          <label className={labelCls}>Ollama Model *</label>
           {availableModels.length > 0 ? (
             <select
               value={model}
               onChange={(e) => setModel(e.target.value)}
-              className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+              className={`${inputCls} ${dark ? '' : 'bg-white'}`}
             >
-              <option value="">Selecione um modelo...</option>
+              <option value="">Select a model...</option>
               {availableModels.map((m) => (
                 <option key={m} value={m}>{m}</option>
               ))}
@@ -113,15 +117,20 @@ export function PersonaForm({ initial, onSave, onCancel }: Props) {
               type="text"
               value={model}
               onChange={(e) => setModel(e.target.value)}
-              placeholder="Ex: llama3.2 (Ollama offline ou sem modelos)"
-              className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+              placeholder="e.g. llama3.2 (Ollama offline or no models found)"
+              className={inputCls}
             />
+          )}
+          {availableModels.length > 0 && model && !availableModels.includes(model) && (
+            <p className="text-xs text-amber-500 mt-1">
+              Warning: "{model}" is not in the list of available Ollama models.
+            </p>
           )}
         </div>
 
-        <RulesEditor rules={rules} onChange={setRules} />
+        <RulesEditor rules={rules} onChange={setRules} dark={dark} />
 
-        <ExampleEditor examples={examples} onChange={setExamples} />
+        <ExampleEditor examples={examples} onChange={setExamples} dark={dark} />
 
         {examples.length > 0 && (
           <div className="flex items-center gap-3">
@@ -131,7 +140,7 @@ export function PersonaForm({ initial, onSave, onCancel }: Props) {
               disabled={analyzing}
               className="text-sm text-purple-600 hover:underline disabled:opacity-50"
             >
-              {analyzing ? 'Analisando...' : '✦ Analisar Estilo com IA'}
+              {analyzing ? 'Analyzing...' : '✦ Analyze Style with AI'}
             </button>
             {analyzeError && (
               <span className="text-xs text-red-500">{analyzeError}</span>
@@ -152,14 +161,14 @@ export function PersonaForm({ initial, onSave, onCancel }: Props) {
             type="submit"
             className="px-5 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
           >
-            {initial ? 'Salvar Alterações' : 'Criar Persona'}
+            {initial ? 'Save Changes' : 'Create Persona'}
           </button>
           <button
             type="button"
             onClick={onCancel}
-            className="px-5 py-2 text-gray-600 text-sm rounded border border-gray-300 hover:bg-gray-50"
+            className={`px-5 py-2 text-sm rounded border ${dark ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'border-gray-300 text-gray-600 hover:bg-gray-50'}`}
           >
-            Cancelar
+            Cancel
           </button>
         </div>
       </form>
@@ -169,6 +178,7 @@ export function PersonaForm({ initial, onSave, onCancel }: Props) {
           rules={generatedRules}
           onConfirm={handleConfirmRules}
           onClose={() => setGeneratedRules(null)}
+          dark={dark}
         />
       )}
     </>

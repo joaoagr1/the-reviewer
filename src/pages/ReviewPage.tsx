@@ -10,12 +10,16 @@ import type { Review } from '../domain/persona'
 
 type View = 'input' | 'result' | 'history'
 
-export function ReviewPage() {
+export function ReviewPage({ dark }: { dark: boolean }) {
   const { personas, fetchPersonas } = usePersonaStore()
   const { reviews, fetchReviews, addReview, removeReview } = useReviewStore()
 
-  const [selectedPersonaId, setSelectedPersonaId] = useState<string | null>(null)
-  const [document, setDocument] = useState('')
+  const [selectedPersonaId, setSelectedPersonaId] = useState<string | null>(() =>
+    localStorage.getItem('review_selectedPersonaId') ?? null
+  )
+  const [document, setDocument] = useState(() =>
+    localStorage.getItem('review_document') ?? ''
+  )
   const [output, setOutput] = useState('')
   const [streaming, setStreaming] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -25,6 +29,15 @@ export function ReviewPage() {
   useEffect(() => {
     fetchPersonas()
   }, [fetchPersonas])
+
+  useEffect(() => {
+    if (selectedPersonaId) localStorage.setItem('review_selectedPersonaId', selectedPersonaId)
+    else localStorage.removeItem('review_selectedPersonaId')
+  }, [selectedPersonaId])
+
+  useEffect(() => {
+    localStorage.setItem('review_document', document)
+  }, [document])
 
   async function handlePersonaChange(id: string) {
     setSelectedPersonaId(id)
@@ -59,14 +72,14 @@ export function ReviewPage() {
       const review: Review = {
         id: crypto.randomUUID(),
         personaId: persona.id,
-        title: titleText.slice(0, 60).trim() || 'Sem título',
+        title: titleText.slice(0, 60).trim() || 'Untitled',
         inputDocument: document,
         outputDocument: html,
         createdAt: new Date().toISOString(),
       }
       await addReview(review)
     } catch (e) {
-      const msg = e instanceof OllamaError ? e.message : 'Erro inesperado ao revisar.'
+      const msg = e instanceof OllamaError ? e.message : 'Unexpected error during review.'
       setError(msg)
       setView('input')
     } finally {
@@ -101,35 +114,35 @@ export function ReviewPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-gray-900">Revisar Documento</h1>
+        <h1 className={`text-xl font-semibold ${dark ? 'text-gray-100' : 'text-gray-900'}`}>Review Document</h1>
         {selectedPersonaId && view !== 'history' && (
           <button
             type="button"
             onClick={() => setView('history')}
-            className="text-sm text-gray-500 hover:text-gray-700 hover:underline"
+            className={`text-sm hover:underline ${dark ? 'text-gray-400 hover:text-gray-200' : 'text-gray-500 hover:text-gray-700'}`}
           >
-            Ver Histórico ({reviews.length})
+            History ({reviews.length})
           </button>
         )}
         {view === 'history' && (
           <button
             type="button"
             onClick={() => setView('input')}
-            className="text-sm text-blue-600 hover:underline"
+            className="text-sm text-blue-500 hover:underline"
           >
-            ← Voltar
+            ← Back
           </button>
         )}
       </div>
 
       {personas.length === 0 && (
-        <p className="text-sm text-amber-600 bg-amber-50 border border-amber-200 rounded p-3">
-          Nenhuma persona criada. Crie uma persona antes de revisar.
+        <p className={`text-sm border rounded p-3 ${dark ? 'text-amber-400 bg-amber-950/30 border-amber-800' : 'text-amber-600 bg-amber-50 border-amber-200'}`}>
+          No personas yet. Create a persona before reviewing.
         </p>
       )}
 
       {error && (
-        <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded p-3">
+        <p className={`text-sm border rounded p-3 ${dark ? 'text-red-400 bg-red-950/30 border-red-800' : 'text-red-600 bg-red-50 border-red-200'}`}>
           {error}
         </p>
       )}
@@ -143,6 +156,7 @@ export function ReviewPage() {
           onDocumentChange={setDocument}
           onSubmit={handleSubmit}
           loading={streaming}
+          dark={dark}
         />
       )}
 
@@ -153,6 +167,7 @@ export function ReviewPage() {
           streaming={streaming}
           onNewReview={handleNewReview}
           onCancel={handleCancel}
+          dark={dark}
         />
       )}
 
@@ -162,6 +177,7 @@ export function ReviewPage() {
           personas={personas}
           onSelect={handleSelectHistoryReview}
           onDelete={removeReview}
+          dark={dark}
         />
       )}
     </div>

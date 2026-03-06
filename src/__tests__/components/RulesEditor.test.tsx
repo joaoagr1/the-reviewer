@@ -6,7 +6,7 @@ import { createRule } from '../../domain/persona'
 describe('RulesEditor', () => {
   it('renders empty state with no rules', () => {
     render(<RulesEditor rules={[]} onChange={vi.fn()} />)
-    expect(screen.getByPlaceholderText(/voz passiva/i)).toBeInTheDocument()
+    expect(screen.getByPlaceholderText(/passive voice/i)).toBeInTheDocument()
   })
 
   it('renders existing rules', () => {
@@ -22,19 +22,19 @@ describe('RulesEditor', () => {
     expect(screen.getByText('Manual')).toBeInTheDocument()
   })
 
-  it('shows IA badge for generated rules', () => {
+  it('shows AI badge for generated rules', () => {
     const rules = [createRule('Regra gerada', 'generated')]
     render(<RulesEditor rules={rules} onChange={vi.fn()} />)
-    expect(screen.getByText('IA')).toBeInTheDocument()
+    expect(screen.getByText('AI')).toBeInTheDocument()
   })
 
-  it('calls onChange with new rule when Adicionar is clicked', () => {
+  it('calls onChange with new rule when Add is clicked', () => {
     const onChange = vi.fn()
     render(<RulesEditor rules={[]} onChange={onChange} />)
-    fireEvent.change(screen.getByPlaceholderText(/voz passiva/i), {
+    fireEvent.change(screen.getByPlaceholderText(/passive voice/i), {
       target: { value: 'Nova regra' },
     })
-    fireEvent.click(screen.getByText('Adicionar'))
+    fireEvent.click(screen.getByText('Add'))
     expect(onChange).toHaveBeenCalledOnce()
     const [newRules] = onChange.mock.calls[0]
     expect(newRules[0].text).toBe('Nova regra')
@@ -45,21 +45,21 @@ describe('RulesEditor', () => {
     const rule = createRule('Remover esta', 'manual')
     const onChange = vi.fn()
     render(<RulesEditor rules={[rule]} onChange={onChange} />)
-    fireEvent.click(screen.getByLabelText(`Remover regra ${rule.text}`))
+    fireEvent.click(screen.getByLabelText(`Remove rule: ${rule.text}`))
     expect(onChange).toHaveBeenCalledWith([])
   })
 
   it('does not add empty rule', () => {
     const onChange = vi.fn()
     render(<RulesEditor rules={[]} onChange={onChange} />)
-    fireEvent.click(screen.getByText('Adicionar'))
+    fireEvent.click(screen.getByText('Add'))
     expect(onChange).not.toHaveBeenCalled()
   })
 
   it('adds rule on Enter key', () => {
     const onChange = vi.fn()
     render(<RulesEditor rules={[]} onChange={onChange} />)
-    const input = screen.getByPlaceholderText(/voz passiva/i)
+    const input = screen.getByPlaceholderText(/passive voice/i)
     fireEvent.change(input, { target: { value: 'Regra via Enter' } })
     fireEvent.keyDown(input, { key: 'Enter' })
     expect(onChange).toHaveBeenCalledOnce()

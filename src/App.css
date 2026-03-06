@@ -81,3 +81,33 @@ mark.diff-delete {
   float: left;
   height: 0;
 }
+
+/* Dark mode rich editor */
+.rich-editor-dark .tiptap {
+  color: #e5e7eb;
+}
+
+.rich-editor-dark .tiptap blockquote {
+  border-left-color: #4b5563;
+  color: #9ca3af;
+}
+
+.rich-editor-dark .tiptap code {
+  background: #374151;
+  color: #e5e7eb;
+}
+
+.rich-editor-dark .tiptap p.is-editor-empty:first-child::before {
+  color: #6b7280;
+}
+
+/* Dark mode diff highlights */
+.dark mark.diff-insert {
+  background-color: #14532d;
+  color: #bbf7d0;
+}
+
+.dark mark.diff-delete {
+  background-color: #7f1d1d;
+  color: #fecaca;
+}

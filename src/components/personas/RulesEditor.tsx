@@ -5,9 +5,10 @@ import { createRule } from '../../domain/persona'
 interface Props {
   rules: Rule[]
   onChange: (rules: Rule[]) => void
+  dark?: boolean
 }
 
-export function RulesEditor({ rules, onChange }: Props) {
+export function RulesEditor({ rules, onChange, dark }: Props) {
   const [newText, setNewText] = useState('')
 
   function addRule() {
@@ -28,27 +29,29 @@ export function RulesEditor({ rules, onChange }: Props) {
     }
   }
 
+  const inputCls = `border rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 ${dark ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-500' : 'border-gray-300 text-gray-900'}`
+
   return (
     <div className="space-y-3">
-      <label className="block text-sm font-medium text-gray-700">Regras de Estilo</label>
+      <label className={`block text-sm font-medium ${dark ? 'text-gray-300' : 'text-gray-700'}`}>Style Rules</label>
 
       <ul className="space-y-2">
         {rules.map((rule) => (
           <li key={rule.id} className="flex items-center gap-2">
-            <span className="flex-1 text-sm text-gray-800">{rule.text}</span>
+            <span className={`flex-1 text-sm ${dark ? 'text-gray-200' : 'text-gray-800'}`}>{rule.text}</span>
             <span
               className={`text-xs px-2 py-0.5 rounded-full ${
                 rule.source === 'generated'
                   ? 'bg-purple-100 text-purple-700'
-                  : 'bg-gray-100 text-gray-600'
+                  : dark ? 'bg-gray-700 text-gray-400' : 'bg-gray-100 text-gray-600'
               }`}
             >
-              {rule.source === 'generated' ? 'IA' : 'Manual'}
+              {rule.source === 'generated' ? 'AI' : 'Manual'}
             </span>
             <button
               type="button"
               onClick={() => removeRule(rule.id)}
-              aria-label={`Remover regra ${rule.text}`}
+              aria-label={`Remove rule: ${rule.text}`}
               className="text-red-400 hover:text-red-600 text-sm"
             >
               ✕
@@ -63,15 +66,15 @@ export function RulesEditor({ rules, onChange }: Props) {
           value={newText}
           onChange={(e) => setNewText(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Ex: Nunca use voz passiva"
-          className="flex-1 border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+          placeholder="e.g. Never use passive voice"
+          className={`flex-1 ${inputCls}`}
         />
         <button
           type="button"
           onClick={addRule}
           className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
         >
-          Adicionar
+          Add
         </button>
       </div>
     </div>

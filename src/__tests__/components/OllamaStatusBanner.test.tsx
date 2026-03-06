@@ -15,7 +15,7 @@ describe('OllamaStatusBanner', () => {
 
   it('shows warning banner when offline', () => {
     render(<OllamaStatusBanner status="offline" />)
-    expect(screen.getByText(/ollama não está rodando/i)).toBeInTheDocument()
+    expect(screen.getByText(/ollama is not running/i)).toBeInTheDocument()
     expect(screen.getByText(/ollama serve/i)).toBeInTheDocument()
   })
 })

@@ -5,9 +5,10 @@ interface Props {
   rules: Rule[]
   onConfirm: (selected: Rule[]) => void
   onClose: () => void
+  dark?: boolean
 }
 
-export function GeneratedRulesModal({ rules, onConfirm, onClose }: Props) {
+export function GeneratedRulesModal({ rules, onConfirm, onClose, dark }: Props) {
   const [selected, setSelected] = useState<Set<string>>(new Set(rules.map((r) => r.id)))
   const [edited, setEdited] = useState<Record<string, string>>(
     Object.fromEntries(rules.map((r) => [r.id, r.text]))
@@ -30,10 +31,10 @@ export function GeneratedRulesModal({ rules, onConfirm, onClose }: Props) {
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4 p-6 space-y-4">
-        <h2 className="text-lg font-semibold text-gray-900">Regras Geradas pela IA</h2>
-        <p className="text-sm text-gray-500">
-          Selecione, edite ou remova as regras antes de salvar.
+      <div className={`rounded-lg shadow-xl w-full max-w-lg mx-4 p-6 space-y-4 ${dark ? 'bg-gray-800 border border-gray-700' : 'bg-white'}`}>
+        <h2 className={`text-lg font-semibold ${dark ? 'text-gray-100' : 'text-gray-900'}`}>AI Generated Rules</h2>
+        <p className={`text-sm ${dark ? 'text-gray-400' : 'text-gray-500'}`}>
+          Select, edit, or remove rules before saving.
         </p>
 
         <ul className="space-y-2 max-h-80 overflow-y-auto">
@@ -43,7 +44,7 @@ export function GeneratedRulesModal({ rules, onConfirm, onClose }: Props) {
                 type="checkbox"
                 checked={selected.has(rule.id)}
                 onChange={() => toggle(rule.id)}
-                aria-label={`Selecionar regra: ${rule.text}`}
+                aria-label={`Select rule: ${rule.text}`}
                 className="shrink-0"
               />
               <input
@@ -53,23 +54,23 @@ export function GeneratedRulesModal({ rules, onConfirm, onClose }: Props) {
                   setEdited((prev) => ({ ...prev, [rule.id]: e.target.value }))
                 }
                 disabled={!selected.has(rule.id)}
-                className="flex-1 border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-40 disabled:bg-gray-50"
+                className={`flex-1 border rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-40 ${dark ? 'bg-gray-700 border-gray-600 text-gray-100 disabled:bg-gray-800' : 'border-gray-300 disabled:bg-gray-50'}`}
               />
             </li>
           ))}
         </ul>
 
         <div className="flex justify-between items-center pt-2">
-          <span className="text-xs text-gray-400">
-            {selected.size} de {rules.length} selecionadas
+          <span className={`text-xs ${dark ? 'text-gray-500' : 'text-gray-400'}`}>
+            {selected.size} of {rules.length} selected
           </span>
           <div className="flex gap-2">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm text-gray-600 border border-gray-300 rounded hover:bg-gray-50"
+              className={`px-4 py-2 text-sm rounded border ${dark ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'text-gray-600 border-gray-300 hover:bg-gray-50'}`}
             >
-              Cancelar
+              Cancel
             </button>
             <button
               type="button"
@@ -77,7 +78,7 @@ export function GeneratedRulesModal({ rules, onConfirm, onClose }: Props) {
               disabled={selected.size === 0}
               className="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
             >
-              Adicionar {selected.size} {selected.size === 1 ? 'Regra' : 'Regras'}
+              Add {selected.size} {selected.size === 1 ? 'Rule' : 'Rules'}
             </button>
           </div>
         </div>

@@ -70,7 +70,7 @@ describe('DocumentInput', () => {
         loading={false}
       />
     )
-    expect(screen.getByRole('button', { name: /revisar/i })).toBeDisabled()
+    expect(screen.getByRole('button', { name: /review/i })).toBeDisabled()
   })
 
   it('disables submit when document is empty', () => {
@@ -86,7 +86,7 @@ describe('DocumentInput', () => {
         loading={false}
       />
     )
-    expect(screen.getByRole('button', { name: /revisar/i })).toBeDisabled()
+    expect(screen.getByRole('button', { name: /review/i })).toBeDisabled()
   })
 
   it('shows loading state', () => {
@@ -102,6 +102,6 @@ describe('DocumentInput', () => {
         loading={true}
       />
     )
-    expect(screen.getByRole('button', { name: /revisando/i })).toBeDisabled()
+    expect(screen.getByRole('button', { name: /reviewing/i })).toBeDisabled()
   })
 })

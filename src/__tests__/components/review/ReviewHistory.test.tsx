@@ -37,7 +37,7 @@ const defaultProps = {
 describe('ReviewHistory', () => {
   it('shows empty state when no reviews', () => {
     render(<ReviewHistory reviews={[]} {...defaultProps} />)
-    expect(screen.getByText(/nenhuma revisão/i)).toBeInTheDocument()
+    expect(screen.getByText(/no reviews yet/i)).toBeInTheDocument()
   })
 
   it('renders review title', () => {
@@ -72,7 +72,7 @@ describe('ReviewHistory', () => {
       makeReview({ title: 'Ata de reunião' }),
     ]
     render(<ReviewHistory reviews={reviews} {...defaultProps} />)
-    fireEvent.change(screen.getByPlaceholderText(/buscar/i), { target: { value: 'financeiro' } })
+    fireEvent.change(screen.getByPlaceholderText(/search/i), { target: { value: 'financeiro' } })
     expect(screen.getByText('Relatório financeiro')).toBeInTheDocument()
     expect(screen.queryByText('Ata de reunião')).not.toBeInTheDocument()
   })

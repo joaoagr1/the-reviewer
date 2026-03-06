@@ -6,7 +6,7 @@ import { createPersona, createRule, createExample } from '../../domain/persona'
 describe('PersonaList', () => {
   it('shows empty state when no personas', () => {
     render(<PersonaList personas={[]} onEdit={vi.fn()} onDelete={vi.fn()} />)
-    expect(screen.getByText(/nenhuma persona/i)).toBeInTheDocument()
+    expect(screen.getByText(/no personas yet/i)).toBeInTheDocument()
   })
 
   it('renders persona name and description', () => {
@@ -21,23 +21,23 @@ describe('PersonaList', () => {
     persona.rules = [createRule('Regra 1', 'manual'), createRule('Regra 2', 'manual')]
     persona.examples = [createExample('orig', 'rev')]
     render(<PersonaList personas={[persona]} onEdit={vi.fn()} onDelete={vi.fn()} />)
-    expect(screen.getByText('2 regras')).toBeInTheDocument()
-    expect(screen.getByText('1 exemplos')).toBeInTheDocument()
+    expect(screen.getByText('2 rules')).toBeInTheDocument()
+    expect(screen.getByText('1 examples')).toBeInTheDocument()
   })
 
-  it('calls onEdit when Editar is clicked', () => {
+  it('calls onEdit when Edit is clicked', () => {
     const persona = createPersona('Rafael', 'Direto', 'llama3.2')
     const onEdit = vi.fn()
     render(<PersonaList personas={[persona]} onEdit={onEdit} onDelete={vi.fn()} />)
-    fireEvent.click(screen.getByText('Editar'))
+    fireEvent.click(screen.getByText('Edit'))
     expect(onEdit).toHaveBeenCalledWith(persona)
   })
 
-  it('calls onDelete when Excluir is clicked', () => {
+  it('calls onDelete when Delete is clicked', () => {
     const persona = createPersona('Rafael', 'Direto', 'llama3.2')
     const onDelete = vi.fn()
     render(<PersonaList personas={[persona]} onEdit={vi.fn()} onDelete={onDelete} />)
-    fireEvent.click(screen.getByText('Excluir'))
+    fireEvent.click(screen.getByText('Delete'))
     expect(onDelete).toHaveBeenCalledWith(persona.id)
   })
 })
