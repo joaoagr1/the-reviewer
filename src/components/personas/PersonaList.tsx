@@ -1,13 +1,15 @@
 import type { Persona } from '../../domain/persona'
+import { createPersona } from '../../domain/persona'
 
 interface Props {
   personas: Persona[]
   onEdit: (persona: Persona) => void
   onDelete: (id: string) => void
+  onDuplicate: (persona: Persona) => void
   dark?: boolean
 }
 
-export function PersonaList({ personas, onEdit, onDelete, dark }: Props) {
+export function PersonaList({ personas, onEdit, onDelete, onDuplicate, dark }: Props) {
   if (personas.length === 0) {
     return (
       <p className={`text-sm text-center py-8 ${dark ? 'text-gray-500' : 'text-gray-400'}`}>
@@ -39,6 +41,13 @@ export function PersonaList({ personas, onEdit, onDelete, dark }: Props) {
               className="text-sm text-blue-500 hover:underline"
             >
               Edit
+            </button>
+            <button
+              type="button"
+              onClick={() => onDuplicate(persona)}
+              className={`text-sm hover:underline ${dark ? 'text-gray-400 hover:text-gray-200' : 'text-gray-500 hover:text-gray-700'}`}
+            >
+              Duplicate
             </button>
             <button
               type="button"

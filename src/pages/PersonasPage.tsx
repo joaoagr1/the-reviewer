@@ -4,6 +4,7 @@ import { usePersonaStore } from '../store/personaStore'
 import { PersonaList } from '../components/personas/PersonaList'
 import { PersonaForm } from '../components/personas/PersonaForm'
 import { ConfirmModal } from '../components/ConfirmModal'
+import { toast } from '../components/Toast'
 
 type View = 'list' | 'create' | 'edit'
 
@@ -68,8 +69,28 @@ export function PersonasPage({ dark }: { dark: boolean }) {
 
   async function handleConfirmDelete() {
     if (!pendingDeleteId) return
+    const deleted = personas.find((p) => p.id === pendingDeleteId)
     await removePersona(pendingDeleteId)
     setPendingDeleteId(null)
+    if (deleted) {
+      toast(`"${deleted.name}" deleted`, {
+        label: 'Undo',
+        onClick: () => addOrUpdatePersona(deleted),
+      })
+    }
+  }
+
+  async function handleDuplicate(persona: Persona) {
+    const now = new Date().toISOString()
+    const copy: Persona = {
+      ...persona,
+      id: crypto.randomUUID(),
+      name: `${persona.name} (copy)`,
+      createdAt: now,
+      updatedAt: now,
+    }
+    await addOrUpdatePersona(copy)
+    toast(`"${copy.name}" created`)
   }
 
   const d = dark
@@ -127,10 +148,27 @@ export function PersonasPage({ dark }: { dark: boolean }) {
             />
           )}
 
+          {personas.length === 0 && (
+            <div className={`rounded-xl border-2 border-dashed p-10 text-center space-y-3 ${d ? 'border-gray-700' : 'border-gray-200'}`}>
+              <div className="text-4xl">✦</div>
+              <h2 className={`font-semibold text-lg ${d ? 'text-gray-200' : 'text-gray-800'}`}>Create your first persona</h2>
+              <p className={`text-sm max-w-sm mx-auto ${d ? 'text-gray-400' : 'text-gray-500'}`}>
+                A persona is a reviewer profile — define their style rules and examples, then use them to rewrite any document in their voice.
+              </p>
+              <button
+                onClick={() => setView('create')}
+                className="mt-2 px-5 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+              >
+                + New Persona
+              </button>
+            </div>
+          )}
+
           <PersonaList
             personas={search.trim() ? personas.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()) || p.description.toLowerCase().includes(search.toLowerCase())) : personas}
             onEdit={handleEdit}
             onDelete={setPendingDeleteId}
+            onDuplicate={handleDuplicate}
             dark={d}
           />
         </>

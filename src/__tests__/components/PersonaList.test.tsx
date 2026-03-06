@@ -5,13 +5,13 @@ import { createPersona, createRule, createExample } from '../../domain/persona'
 
 describe('PersonaList', () => {
   it('shows empty state when no personas', () => {
-    render(<PersonaList personas={[]} onEdit={vi.fn()} onDelete={vi.fn()} />)
+    render(<PersonaList personas={[]} onEdit={vi.fn()} onDelete={vi.fn()} onDuplicate={vi.fn()} />)
     expect(screen.getByText(/no personas yet/i)).toBeInTheDocument()
   })
 
   it('renders persona name and description', () => {
     const personas = [createPersona('Rafael', 'Gosta de textos diretos', 'llama3.2')]
-    render(<PersonaList personas={personas} onEdit={vi.fn()} onDelete={vi.fn()} />)
+    render(<PersonaList personas={personas} onEdit={vi.fn()} onDelete={vi.fn()} onDuplicate={vi.fn()} />)
     expect(screen.getByText('Rafael')).toBeInTheDocument()
     expect(screen.getByText('Gosta de textos diretos')).toBeInTheDocument()
   })
@@ -20,7 +20,7 @@ describe('PersonaList', () => {
     const persona = createPersona('Ana', 'Formal', 'llama3.2')
     persona.rules = [createRule('Regra 1', 'manual'), createRule('Regra 2', 'manual')]
     persona.examples = [createExample('orig', 'rev')]
-    render(<PersonaList personas={[persona]} onEdit={vi.fn()} onDelete={vi.fn()} />)
+    render(<PersonaList personas={[persona]} onEdit={vi.fn()} onDelete={vi.fn()} onDuplicate={vi.fn()} />)
     expect(screen.getByText('2 rules')).toBeInTheDocument()
     expect(screen.getByText('1 examples')).toBeInTheDocument()
   })
@@ -28,7 +28,7 @@ describe('PersonaList', () => {
   it('calls onEdit when Edit is clicked', () => {
     const persona = createPersona('Rafael', 'Direto', 'llama3.2')
     const onEdit = vi.fn()
-    render(<PersonaList personas={[persona]} onEdit={onEdit} onDelete={vi.fn()} />)
+    render(<PersonaList personas={[persona]} onEdit={onEdit} onDelete={vi.fn()} onDuplicate={vi.fn()} />)
     fireEvent.click(screen.getByText('Edit'))
     expect(onEdit).toHaveBeenCalledWith(persona)
   })
@@ -36,7 +36,7 @@ describe('PersonaList', () => {
   it('calls onDelete when Delete is clicked', () => {
     const persona = createPersona('Rafael', 'Direto', 'llama3.2')
     const onDelete = vi.fn()
-    render(<PersonaList personas={[persona]} onEdit={vi.fn()} onDelete={onDelete} />)
+    render(<PersonaList personas={[persona]} onEdit={vi.fn()} onDelete={onDelete} onDuplicate={vi.fn()} />)
     fireEvent.click(screen.getByText('Delete'))
     expect(onDelete).toHaveBeenCalledWith(persona.id)
   })

@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import type { Persona, Rule, Example } from '../../domain/persona'
 import { createPersona, validatePersona } from '../../domain/persona'
-import { analyzeStyle, listModels, OllamaError } from '../../services/ollamaService'
+import { analyzeStyle, listModels, OllamaError, checkOllamaStatus } from '../../services/ollamaService'
 import { RulesEditor } from './RulesEditor'
 import { ExampleEditor } from './ExampleEditor'
 import { GeneratedRulesModal } from './GeneratedRulesModal'
@@ -24,10 +24,32 @@ export function PersonaForm({ initial, onSave, onCancel, dark }: Props) {
   const [generatedRules, setGeneratedRules] = useState<Rule[] | null>(null)
   const [analyzeError, setAnalyzeError] = useState<string | null>(null)
   const [availableModels, setAvailableModels] = useState<string[]>([])
+  const [testingConnection, setTestingConnection] = useState(false)
+  const [connectionStatus, setConnectionStatus] = useState<'ok' | 'fail' | null>(null)
+  const formRef = useRef<HTMLFormElement>(null)
 
   useEffect(() => {
     listModels().then(setAvailableModels)
   }, [])
+
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault()
+        formRef.current?.requestSubmit()
+      }
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [])
+
+  async function handleTestConnection() {
+    setTestingConnection(true)
+    setConnectionStatus(null)
+    const ok = await checkOllamaStatus()
+    setConnectionStatus(ok ? 'ok' : 'fail')
+    setTestingConnection(false)
+  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -76,7 +98,7 @@ export function PersonaForm({ initial, onSave, onCancel, dark }: Props) {
 
   return (
     <>
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label className={labelCls}>Name *</label>
           <input
@@ -126,6 +148,18 @@ export function PersonaForm({ initial, onSave, onCancel, dark }: Props) {
               Warning: "{model}" is not in the list of available Ollama models.
             </p>
           )}
+          <div className="flex items-center gap-2 mt-1">
+            <button
+              type="button"
+              onClick={handleTestConnection}
+              disabled={testingConnection || !model}
+              className={`text-xs hover:underline disabled:opacity-40 ${dark ? 'text-gray-400' : 'text-gray-500'}`}
+            >
+              {testingConnection ? 'Testing...' : 'Test connection'}
+            </button>
+            {connectionStatus === 'ok' && <span className="text-xs text-green-500">Ollama online</span>}
+            {connectionStatus === 'fail' && <span className="text-xs text-red-500">Ollama offline</span>}
+          </div>
         </div>
 
         <RulesEditor rules={rules} onChange={setRules} dark={dark} />
@@ -159,9 +193,10 @@ export function PersonaForm({ initial, onSave, onCancel, dark }: Props) {
         <div className="flex gap-3">
           <button
             type="submit"
-            className="px-5 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+            className="px-5 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 flex items-center gap-2"
           >
             {initial ? 'Save Changes' : 'Create Persona'}
+            <span className="text-xs opacity-60">Ctrl+S</span>
           </button>
           <button
             type="button"

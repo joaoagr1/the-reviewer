@@ -101,6 +101,19 @@ mark.diff-delete {
   color: #6b7280;
 }
 
+/* Review progress bar animation */
+@keyframes progress-indeterminate {
+  0%   { transform: translateX(-100%) scaleX(0.5); }
+  50%  { transform: translateX(0%)    scaleX(0.8); }
+  100% { transform: translateX(100%)  scaleX(0.5); }
+}
+
+.animate-progress {
+  animation: progress-indeterminate 1.4s ease-in-out infinite;
+  transform-origin: left;
+  width: 60%;
+}
+
 /* Dark mode diff highlights */
 .dark mark.diff-insert {
   background-color: #14532d;

@@ -1,5 +1,10 @@
 import { useState, useRef } from 'react'
 import { DiffViewer } from './DiffViewer'
+import { ReviewProgress } from './ReviewProgress'
+
+function wordCount(text: string): number {
+  return text.trim().split(/\s+/).filter(Boolean).length
+}
 
 interface Props {
   original: string
@@ -74,19 +79,25 @@ export function ReviewResult({ original, revised, streaming, onNewReview, onCanc
     setExportOpen(false)
   }
 
+  const originalWords = wordCount(extractText(original))
+  const revisedWords = wordCount(extractText(revised))
+  const diff = originalWords - revisedWords
+  const pct = originalWords > 0 ? Math.round((diff / originalWords) * 100) : 0
+
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className={`text-base font-medium ${dark ? 'text-gray-200' : 'text-gray-800'}`}>
-          {streaming ? (
-            <span className="flex items-center gap-2">
-              <span className="inline-block w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
-              Reviewing...
-            </span>
-          ) : (
-            'Review complete'
-          )}
-        </h2>
+      {streaming && <ReviewProgress dark={dark} />}
+
+      {!streaming && (
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <h2 className={`text-base font-medium ${dark ? 'text-gray-200' : 'text-gray-800'}`}>Review complete</h2>
+            {diff !== 0 && (
+              <span className={`text-xs px-2 py-0.5 rounded-full ${diff > 0 ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
+                {diff > 0 ? `-${diff} words (${pct}% shorter)` : `+${Math.abs(diff)} words`}
+              </span>
+            )}
+          </div>
 
         <div className="flex items-center gap-3">
           {!streaming && (
@@ -119,27 +130,30 @@ export function ReviewResult({ original, revised, streaming, onNewReview, onCanc
             </div>
           )}
 
-          {streaming ? (
-            <button
-              type="button"
-              onClick={onCancel}
-              className="text-sm text-red-500 hover:text-red-700 border border-red-300 rounded px-3 py-1 hover:bg-red-50 transition-colors"
-            >
-              Cancel
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={onNewReview}
-              className="text-sm text-blue-600 hover:underline"
-            >
-              New Review
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={onNewReview}
+            className="text-sm text-blue-600 hover:underline"
+          >
+            New Review
+          </button>
         </div>
       </div>
+      )}
 
-      <DiffViewer original={original} revised={revised} dark={dark} />
+      {streaming && (
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="text-sm text-red-500 hover:text-red-700 border border-red-300 rounded px-3 py-1 hover:bg-red-50 transition-colors"
+          >
+            Cancel
+          </button>
+        </div>
+      )}
+
+      {!streaming && <DiffViewer original={original} revised={revised} dark={dark} />}
     </div>
   )
 }

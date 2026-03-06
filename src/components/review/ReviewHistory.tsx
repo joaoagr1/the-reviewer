@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import type { Persona, Review } from '../../domain/persona'
 import { ConfirmModal } from '../ConfirmModal'
+import { toast } from '../Toast'
 
 interface Props {
   reviews: Review[]
   personas: Persona[]
   onSelect: (review: Review) => void
   onDelete: (id: string) => void
+  onRestore?: (review: Review) => void
   dark?: boolean
 }
 
@@ -20,7 +22,7 @@ function formatDate(iso: string): string {
   })
 }
 
-export function ReviewHistory({ reviews, personas, onSelect, onDelete, dark }: Props) {
+export function ReviewHistory({ reviews, personas, onSelect, onDelete, onRestore, dark }: Props) {
   const [query, setQuery] = useState('')
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null)
 
@@ -88,7 +90,14 @@ export function ReviewHistory({ reviews, personas, onSelect, onDelete, dark }: P
           title="Delete review"
           message="Are you sure? This review will be permanently deleted."
           confirmLabel="Delete"
-          onConfirm={() => { onDelete(pendingDeleteId); setPendingDeleteId(null) }}
+          onConfirm={() => {
+            const deleted = reviews.find((r) => r.id === pendingDeleteId)
+            onDelete(pendingDeleteId)
+            setPendingDeleteId(null)
+            if (deleted && onRestore) {
+              toast(`"${deleted.title}" deleted`, { label: 'Undo', onClick: () => onRestore(deleted) })
+            }
+          }}
           onCancel={() => setPendingDeleteId(null)}
           dark={dark}
         />

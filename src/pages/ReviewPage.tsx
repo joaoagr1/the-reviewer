@@ -177,6 +177,7 @@ export function ReviewPage({ dark }: { dark: boolean }) {
           personas={personas}
           onSelect={handleSelectHistoryReview}
           onDelete={removeReview}
+          onRestore={addReview}
           dark={dark}
         />
       )}

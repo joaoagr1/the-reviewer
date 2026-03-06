@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom'
 import { PersonasPage } from './pages/PersonasPage'
 import { ReviewPage } from './pages/ReviewPage'
+import { AboutPage } from './pages/AboutPage'
 import { OllamaStatusBanner } from './components/OllamaStatusBanner'
+import { ToastProvider } from './components/Toast'
 import { checkOllamaStatus } from './services/ollamaService'
 import type { OllamaStatus } from './components/OllamaStatusBanner'
 import './App.css'
@@ -24,6 +26,9 @@ function Nav({ dark, onToggleDark }: { dark: boolean; onToggleDark: () => void }
         </NavLink>
         <NavLink to="/review" className={({ isActive }) => (isActive ? active : inactive)}>
           Review
+        </NavLink>
+        <NavLink to="/about" className={({ isActive }) => (isActive ? active : inactive)}>
+          About
         </NavLink>
       </div>
       <div className="flex items-center gap-3">
@@ -74,8 +79,10 @@ export default function App() {
           <Routes>
             <Route path="/" element={<PersonasPage dark={dark} />} />
             <Route path="/review" element={<ReviewPage dark={dark} />} />
+            <Route path="/about" element={<AboutPage dark={dark} />} />
           </Routes>
         </main>
+        <ToastProvider dark={dark} />
       </div>
     </BrowserRouter>
   )
