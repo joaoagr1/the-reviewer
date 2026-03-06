@@ -35,6 +35,7 @@ pub struct Persona {
 pub struct Review {
     pub id: String,
     pub persona_id: String,
+    pub title: String,
     pub input_document: String,
     pub output_document: String,
     pub created_at: String,

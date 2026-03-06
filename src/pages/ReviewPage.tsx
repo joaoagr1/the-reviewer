@@ -11,7 +11,7 @@ type View = 'input' | 'result' | 'history'
 
 export function ReviewPage() {
   const { personas, fetchPersonas } = usePersonaStore()
-  const { reviews, fetchReviews, addReview } = useReviewStore()
+  const { reviews, fetchReviews, addReview, removeReview } = useReviewStore()
 
   const [selectedPersonaId, setSelectedPersonaId] = useState<string | null>(null)
   const [document, setDocument] = useState('')
@@ -51,9 +51,11 @@ export function ReviewPage() {
         setOutput((prev) => prev + chunk)
       }
 
+      const titleText = new DOMParser().parseFromString(document, 'text/html').body.innerText
       const review: Review = {
         id: crypto.randomUUID(),
         personaId: persona.id,
+        title: titleText.slice(0, 60).trim() || 'Sem título',
         inputDocument: document,
         outputDocument: result,
         createdAt: new Date().toISOString(),
@@ -147,7 +149,12 @@ export function ReviewPage() {
       )}
 
       {view === 'history' && (
-        <ReviewHistory reviews={reviews} onSelect={handleSelectHistoryReview} />
+        <ReviewHistory
+          reviews={reviews}
+          personas={personas}
+          onSelect={handleSelectHistoryReview}
+          onDelete={removeReview}
+        />
       )}
     </div>
   )

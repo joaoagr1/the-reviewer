@@ -24,3 +24,7 @@ export async function saveReview(review: Review): Promise<void> {
 export async function listReviews(personaId: string): Promise<Review[]> {
   return await invoke('list_reviews', { personaId })
 }
+
+export async function deleteReview(id: string): Promise<void> {
+  await invoke('delete_review', { id })
+}

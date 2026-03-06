@@ -27,6 +27,7 @@ export interface Persona {
 export interface Review {
   id: string
   personaId: string
+  title: string
   inputDocument: string
   outputDocument: string
   createdAt: string

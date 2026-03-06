@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import type { Review } from '../domain/persona'
-import { saveReview, listReviews } from '../services/personaService'
+import { saveReview, listReviews, deleteReview } from '../services/personaService'
 
 interface ReviewStore {
   reviews: Review[]
@@ -8,6 +8,7 @@ interface ReviewStore {
   error: string | null
   fetchReviews: (personaId: string) => Promise<void>
   addReview: (review: Review) => Promise<void>
+  removeReview: (id: string) => Promise<void>
 }
 
 export const useReviewStore = create<ReviewStore>((set) => ({
@@ -28,5 +29,10 @@ export const useReviewStore = create<ReviewStore>((set) => ({
   addReview: async (review: Review) => {
     await saveReview(review)
     set((state) => ({ reviews: [review, ...state.reviews] }))
+  },
+
+  removeReview: async (id: string) => {
+    await deleteReview(id)
+    set((state) => ({ reviews: state.reviews.filter((r) => r.id !== id) }))
   },
 }))

@@ -3,7 +3,7 @@ mod models;
 mod storage;
 
 use commands::persona::{delete_persona, get_persona, list_personas, save_persona};
-use commands::review::{list_reviews, save_review};
+use commands::review::{delete_review, list_reviews, save_review};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -16,6 +16,7 @@ pub fn run() {
             delete_persona,
             save_review,
             list_reviews,
+            delete_review,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
