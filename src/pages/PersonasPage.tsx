@@ -15,6 +15,7 @@ export function PersonasPage({ dark }: { dark: boolean }) {
   const [editing, setEditing] = useState<Persona | null>(null)
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null)
   const [search, setSearch] = useState('')
+  const [importError, setImportError] = useState<string | null>(null)
   const importRef = useRef<HTMLInputElement>(null)
 
   function handleExport() {
@@ -33,12 +34,14 @@ export function PersonasPage({ dark }: { dark: boolean }) {
     if (!file) return
     try {
       const text = await file.text()
-      const imported: Persona[] = JSON.parse(text)
+      const parsed = JSON.parse(text)
+      const imported: Persona[] = Array.isArray(parsed) ? parsed : [parsed]
       for (const persona of imported) {
         await addOrUpdatePersona(persona)
       }
-    } catch {
-      // invalid file — silently ignore
+      await fetchPersonas()
+    } catch (err) {
+      setImportError(`Import failed: ${err instanceof Error ? err.message : String(err)}`)
     }
     if (importRef.current) importRef.current.value = ''
   }
@@ -106,6 +109,12 @@ export function PersonasPage({ dark }: { dark: boolean }) {
 
           {error && (
             <p className="text-red-500 text-sm mb-4">Failed to load personas: {error}</p>
+          )}
+
+          {importError && (
+            <p className={`text-sm mb-4 border rounded p-2 ${d ? 'text-red-400 border-red-800 bg-red-950/30' : 'text-red-600 border-red-200 bg-red-50'}`}>
+              {importError}
+            </p>
           )}
 
           {personas.length > 2 && (
