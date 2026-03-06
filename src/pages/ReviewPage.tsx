@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { marked } from 'marked'
 import { usePersonaStore } from '../store/personaStore'
 import { useReviewStore } from '../store/reviewStore'
 import { streamReview, OllamaError } from '../services/ollamaService'
@@ -51,13 +52,16 @@ export function ReviewPage() {
         setOutput((prev) => prev + chunk)
       }
 
+      const html = await marked.parse(result)
+      setOutput(html)
+
       const titleText = new DOMParser().parseFromString(document, 'text/html').body.innerText
       const review: Review = {
         id: crypto.randomUUID(),
         personaId: persona.id,
         title: titleText.slice(0, 60).trim() || 'Sem título',
         inputDocument: document,
-        outputDocument: result,
+        outputDocument: html,
         createdAt: new Date().toISOString(),
       }
       await addReview(review)
@@ -84,9 +88,13 @@ export function ReviewPage() {
     setView('input')
   }
 
-  function handleSelectHistoryReview(review: Review) {
+  async function handleSelectHistoryReview(review: Review) {
     setDocument(review.inputDocument)
-    setOutput(review.outputDocument)
+    const isHtml = /<[a-z][\s\S]*>/i.test(review.outputDocument)
+    const output = isHtml
+      ? review.outputDocument
+      : await marked.parse(review.outputDocument)
+    setOutput(output)
     setView('result')
   }
 

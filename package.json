@@ -25,6 +25,7 @@
     "@tiptap/react": "^3.20.0",
     "@tiptap/starter-kit": "^3.20.0",
     "diff-match-patch": "^1.0.5",
+    "marked": "^17.0.4",
     "ollama": "^0.6.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
