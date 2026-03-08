@@ -223,17 +223,6 @@ pnpm test && cd src-tauri && cargo test
 
 ---
 
-## Roadmap
-
-- [ ] Export reviewed documents (PDF, DOCX)
-- [ ] Import personas from file (share between machines)
-- [ ] Support for multiple Ollama models per persona
-- [ ] Dark / light theme toggle
-- [ ] Keyboard shortcuts
-- [ ] Windows and macOS installers published to GitHub Releases
-
----
-
 ## License
 
 This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
