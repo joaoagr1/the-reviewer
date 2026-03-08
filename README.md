@@ -1,6 +1,6 @@
 
 <p align="center">
-  <img src="image.png" alt="The Reviewer" width="200" />
+  <img src="public/logo.png" alt="The Reviewer" width="200" />
 </p>
 
 # The Reviewer
@@ -15,15 +15,17 @@ Everything runs locally via [Ollama](https://ollama.com). Your documents never l
 
 ## Screenshots
 
-> _Add screenshots here after running the app for the first time._
-
-| Personas Page | Review Page |
+| Persona List | Edit Persona |
 |---|---|
-| ![Personas Page](docs/screenshots/personas.png) | ![Review Page](docs/screenshots/review.png) |
+| ![Persona List](public/persona-list.png) | ![Edit Persona](public/edit-persona.png) |
 
-| Diff Viewer | Review History |
+| Review (Split) | Review (Unified) |
 |---|---|
-| ![Diff Viewer](docs/screenshots/diff.png) | ![Review History](docs/screenshots/history.png) |
+| ![Review Split](public/review-spli.png) | ![Review Unified](public/review-unified.png) |
+
+| About |
+|---|
+| ![About](public/about.png) |
 
 ---
 
