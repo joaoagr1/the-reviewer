@@ -30,7 +30,7 @@ export function ExampleEditor({ examples, onChange, dark }: Props) {
 
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
   const toggleExpand = (id: string) =>
-    setExpanded((prev) => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n })
+    setExpanded((prev) => { const n = new Set(prev); if (n.has(id)) { n.delete(id) } else { n.add(id) }; return n })
 
   const borderCls = dark ? 'border-gray-700' : 'border-gray-200'
   const inputCls = `w-full border rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 ${dark ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-500' : 'border-gray-300'}`

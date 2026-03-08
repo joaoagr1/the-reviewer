@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { diff_match_patch, DIFF_INSERT, DIFF_DELETE, DIFF_EQUAL } from 'diff-match-patch'
+import { diff_match_patch, DIFF_INSERT, DIFF_DELETE } from 'diff-match-patch'
 
 interface Props {
   original: string

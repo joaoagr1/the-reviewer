@@ -1,5 +1,4 @@
 import type { Persona } from '../../domain/persona'
-import { createPersona } from '../../domain/persona'
 
 interface Props {
   personas: Persona[]
